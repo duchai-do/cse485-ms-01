@@ -2,6 +2,17 @@
 
     require_once __DIR__ . '/data.php';
 
+
+
+$categoryMap = [];
+
+foreach ($categories as $category) {
+    $categoryMap[$category['id']] = $category['name'];
+}
+
+$tong = 0;
+
+$soSanPham = count($products);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,32 +29,58 @@
             <thead>
                 <tr>
                     <th>SKU</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                    <th>Qty</th>
+                    <th>Ten</th>
+                    <th>Danh Muc</th>
+                    <th>Gia</th>
+                    <th>So Luong</th>
+                    <th>Thanh tien</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($products as $product) : ?>
-                    <tr>
-                        <td><?= $product['sku'] ?></td>
-                        <td><?= $product['name'] ?></td>
-                        <td>
-                            <?php
-                                foreach ($categories as $category) {
-                                    if ($category['id'] == $product['category_id']) {
-                                        echo $category['name'];
-                                        break;
-                                    }
-                                }
-                            ?>
-                        </td>
-                        <td><?= number_format($product['price'], 0, ',', '.') ?> VND</td>
-                        <td><?= $product['qty'] ?></td>
-                    </tr>
+                    <?php
+
+                        $thanhTien = $product['price'] * $product['qty'];
+
+                        $tong += $thanhTien;
+
+                        $tenDm = $categoryMap[$product['category_id']] ?? '-';
+                ?>
+                <tr>
+                    <td>
+                        <?php echo htmlspecialchars($product['sku']); ?>
+                    </td>
+                    <td>
+                        <?php echo htmlspecialchars($product['name']); ?>
+                    </td>
+                    <td>
+                        <?php echo htmlspecialchars($tenDm); ?>
+                    </td>
+                    <td>
+                        <?php echo number_format($product['price'], 0, ',', '.'); ?> VND
+                    </td>
+                    <td>
+                        <?php echo $product['qty']; ?>
+                    </td>
+                    <td>
+                        <?php echo number_format($thanhTien, 0, ',', '.'); ?> VND
+                    </td>
+                </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>    
+        <p>
+            <strong>So san pham = <?php echo $soSanPham; ?></strong>
+        </p>
+        <p>
+            <strong>Tong gia tri kho = <?php echo number_format($tong, 0, ',', '.'); ?> VND</strong
+        </p>
+        
+        <h2>Debug</h2>
+        <?php
+            echo '<pre>';
+            var_dump($products);   
+            echo '</pre>';
+        ?>
     </body>
 </html>
